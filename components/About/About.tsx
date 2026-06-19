@@ -1,9 +1,8 @@
 // components/About/About.tsx
-// SECTION 2: About Me with Backend Ecosystem Theme
+// BOUNTY CARD — Wanted Poster profile with arrest record
 
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import gsap from 'gsap';
 import { FiGithub, FiLinkedin, FiMail, FiPhone, FiMapPin } from 'react-icons/fi';
 
 interface AboutProps {
@@ -23,255 +22,515 @@ interface AboutProps {
       cgpa: number;
       period: string;
     };
+    experience: {
+      company: string;
+      position: string;
+      period: string;
+      description: string;
+      tech: string[];
+    }[];
   };
 }
 
-const BackgroundEcosystem: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-    const particleCount = typeof window !== 'undefined' && window.innerWidth < 768 ? 8 : 20;
-
-    for (let i = 0; i < particleCount; i++) {
-      const particle = document.createElement('div');
-      const size = Math.random() * 3 + 2;
-      particle.style.cssText = `
-        position: absolute;
-        width: ${size}px;
-        height: ${size}px;
-        background: radial-gradient(circle, #00d9ff, #0088ff);
-        border-radius: 50%;
-        left: ${Math.random() * 100}%;
-        top: ${Math.random() * 100}%;
-        box-shadow: 0 0 ${size * 3}px rgba(0, 217, 255, 0.8);
-        opacity: 0.6;
-        pointer-events: none;
-      `;
-      containerRef.current.appendChild(particle);
-
-      gsap.to(particle, {
-        duration: Math.random() * 10 + 10,
-        x: (Math.random() - 0.5) * 400,
-        y: (Math.random() - 0.5) * 400,
-        opacity: 0,
-        repeat: -1,
-        ease: 'sine.inOut',
-        delay: Math.random() * 3,
-      });
-    }
-  }, []);
-
-  return (
-    <div ref={containerRef} className="absolute inset-0 overflow-hidden bg-[#1e293b]">
-      {/* Grid overlay */}
-      <svg className="absolute inset-0 w-full h-full opacity-10" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <pattern id="aboutGrid" width="50" height="50" patternUnits="userSpaceOnUse">
-            <path d="M 50 0 L 0 0 0 50" fill="none" stroke="cyan" strokeWidth="0.5" />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#aboutGrid)" />
-      </svg>
-
-      {/* Connection lines */}
-      <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
-        <line x1="10%" y1="20%" x2="90%" y2="80%" stroke="rgba(0,217,255,0.15)" strokeWidth="1.5" />
-        <line x1="90%" y1="20%" x2="10%" y2="80%" stroke="rgba(0,217,255,0.15)" strokeWidth="1.5" />
-        <line x1="50%" y1="0%" x2="50%" y2="100%" stroke="rgba(0,136,255,0.1)" strokeWidth="1" />
-      </svg>
-    </div>
-  );
-};
-
-const QuickLinks: React.FC<{ resume: AboutProps['resume'] }> = ({ resume }) => {
-  const links = [
-    { icon: FiGithub,   label: 'GitHub',   url: resume.personal.github,           hoverColor: '#00d9ff' },
-    { icon: FiLinkedin, label: 'LinkedIn', url: resume.personal.linkedin,          hoverColor: '#0088ff' },
-    { icon: FiMail,     label: 'Email',    url: `mailto:${resume.personal.email}`, hoverColor: '#ff6b6b' },
-  ];
-
-  return (
-    <div className="flex gap-4 flex-wrap">
-      {links.map(({ icon: Icon, label, url, hoverColor }, i) => (
-        <motion.a
-          key={i}
-          href={url}
-          target={url.startsWith('mailto') ? undefined : '_blank'}
-          rel="noopener noreferrer"
-          className="group relative p-4 rounded-xl bg-slate-700/50 backdrop-blur-md border border-gray-600 hover:border-cyan-500 transition-all duration-300"
-          title={label}
-          whileHover={{ scale: 1.2, y: -8, boxShadow: `0 0 25px ${hoverColor}60` }}
-          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-        >
-          <Icon className="w-5 h-5 text-gray-300 group-hover:text-cyan-300 transition-colors" />
-          <motion.span
-            className="absolute -top-9 left-1/2 -translate-x-1/2 bg-[#0a0f1a] text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
-          >
-            {label}
-          </motion.span>
-        </motion.a>
-      ))}
-    </div>
-  );
-};
+const StatBox: React.FC<{ label: string; value: string }> = ({ label, value }) => (
+  <div
+    style={{
+      background: 'rgba(212,175,55,0.06)',
+      border: '1px solid rgba(212,175,55,0.25)',
+      padding: '14px 18px',
+      textAlign: 'center',
+    }}
+  >
+    <p
+      style={{
+        fontFamily: 'Georgia, serif',
+        fontSize: '0.6rem',
+        letterSpacing: '0.35em',
+        textTransform: 'uppercase',
+        color: 'rgba(212,175,55,0.6)',
+        marginBottom: 6,
+      }}
+    >
+      {label}
+    </p>
+    <p
+      style={{
+        fontFamily: 'Georgia, serif',
+        fontSize: '1rem',
+        fontWeight: 700,
+        color: '#ffffff',
+        letterSpacing: '0.02em',
+      }}
+    >
+      {value}
+    </p>
+  </div>
+);
 
 export const About: React.FC<AboutProps> = ({ resume }) => {
-  const { personal, education } = resume;
+  const { personal, education, experience } = resume;
 
-  const highlights = [
-    { title: '🎓 Education', content: `${education.school}\n${education.degree} (${education.period})` },
-    { title: '💻 Specialization', content: 'Backend Systems · Full-Stack Development · ML/AI Integration' },
-    { title: '🚀 Focus Areas',   content: 'Django · Node.js · React · TensorFlow · OpenCV · System Design' },
-    { title: '🎯 Goal',         content: 'Build scalable, impactful products that solve real-world problems' },
+  const charges = [
+    { label: '🎓 Academy', content: `${education.school}\n${education.degree}` },
+    { label: '💻 Specialization', content: 'Backend Systems · Full-Stack · ML/AI' },
+    { label: '🚀 Arsenal', content: 'Django · Node.js · React · TensorFlow · OpenCV' },
+    { label: '🎯 Mission', content: 'Build scalable, impactful products solving real-world problems' },
   ];
 
   return (
-    <section className="relative w-full py-24 px-6 bg-[#1e293b] overflow-hidden" id="about">
-      <BackgroundEcosystem />
+    <section
+      id="about"
+      className="relative w-full overflow-hidden"
+      style={{
+        background: 'linear-gradient(180deg, #000000 0%, #070400 60%, #000000 100%)',
+        paddingBlock: 'clamp(4rem, 10vw, 8rem)',
+      }}
+    >
+      {/* Background grid pattern */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(212,175,55,0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(212,175,55,0.03) 1px, transparent 1px)
+          `,
+          backgroundSize: '60px 60px',
+        }}
+      />
+      {/* Radial vignette */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: 'radial-gradient(ellipse 80% 80% at 50% 50%, transparent 40%, rgba(0,0,0,0.7) 100%)',
+        }}
+      />
 
-      <div className="relative z-10 max-w-6xl mx-auto">
-        {/* Title */}
+      {/* Top gold rule */}
+      <motion.div
+        className="absolute top-0 inset-x-0 h-px"
+        style={{ background: 'linear-gradient(to right, transparent, #D4AF37 30%, #D4AF37 70%, transparent)' }}
+        initial={{ scaleX: 0 }}
+        whileInView={{ scaleX: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1.2 }}
+      />
+
+      <div className="relative z-10 max-w-6xl mx-auto px-6">
+
+        {/* Section label */}
         <motion.div
           className="text-center mb-16"
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
           viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
         >
-          <h2 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent mb-4">
-            About Me
+          <p
+            className="text-xs tracking-[0.5em] uppercase mb-4"
+            style={{ color: 'rgba(212,175,55,0.6)', fontFamily: 'Georgia, serif' }}
+          >
+            ✦ MARINE WORLD GOVERNMENT ✦
+          </p>
+          <h2
+            className="font-black leading-none mb-4"
+            style={{
+              fontFamily: 'Georgia, serif',
+              fontSize: 'clamp(2.5rem, 7vw, 5rem)',
+              color: '#D4AF37',
+              textShadow: '0 0 50px rgba(212,175,55,0.3)',
+              letterSpacing: '-0.02em',
+            }}
+          >
+            WANTED POSTER
           </h2>
-          <div className="w-20 h-1 bg-gradient-to-r from-cyan-400 to-blue-400 mx-auto rounded-full" />
+          <div
+            className="mx-auto"
+            style={{ width: 100, height: 2, background: 'linear-gradient(to right, transparent, #D4AF37, transparent)' }}
+          />
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-stretch">
-          {/* Left: Card */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+
+          {/* LEFT: Bounty Card */}
           <motion.div
-            className="relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-8 border border-cyan-500/30 backdrop-blur-lg h-full flex flex-col justify-between"
-            initial={{ opacity: 0, x: -30 }}
+            initial={{ opacity: 0, x: -40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.1 }}
           >
-            {/* Glow */}
-            <div className="absolute inset-0 rounded-2xl opacity-40 pointer-events-none"
-              style={{ background: 'radial-gradient(circle at 50% 0%, rgba(0,217,255,0.2), transparent)' }}
-            />
+            {/* Main wanted card */}
+            <div
+              style={{
+                background: '#FEFEF0',
+                border: '3px solid #000',
+                boxShadow: '6px 6px 0 #000, 0 0 60px rgba(212,175,55,0.2)',
+                position: 'relative',
+                overflow: 'hidden',
+              }}
+            >
+              {/* Corner accents */}
+              {[
+                { top: -1, left: -1, borderWidth: '4px 0 0 4px' },
+                { top: -1, right: -1, borderWidth: '4px 4px 0 0' },
+                { bottom: -1, left: -1, borderWidth: '0 0 4px 4px' },
+                { bottom: -1, right: -1, borderWidth: '0 4px 4px 0' },
+              ].map((s, i) => (
+                <div
+                  key={i}
+                  style={{
+                    position: 'absolute',
+                    width: 20,
+                    height: 20,
+                    borderStyle: 'solid',
+                    borderColor: '#D4AF37',
+                    borderWidth: s.borderWidth,
+                    top: s.top,
+                    left: (s as typeof s & { left?: number }).left,
+                    right: (s as typeof s & { right?: number }).right,
+                    bottom: (s as typeof s & { bottom?: number }).bottom,
+                    zIndex: 2,
+                  }}
+                />
+              ))}
 
-            <div>
-              <h2 className="text-4xl font-bold text-white mb-1">{personal.name}</h2>
-              <p className="text-xl text-cyan-400 font-semibold mb-6">{personal.title}</p>
+              {/* Poster header strip */}
+              <div
+                style={{
+                  background: '#000',
+                  padding: '12px 24px',
+                  textAlign: 'center',
+                  borderBottom: '2px solid #D4AF37',
+                }}
+              >
+                <p
+                  style={{
+                    fontFamily: 'Georgia, serif',
+                    fontSize: '0.65rem',
+                    letterSpacing: '0.55em',
+                    textTransform: 'uppercase',
+                    color: '#D4AF37',
+                    fontWeight: 700,
+                  }}
+                >
+                  WORLD GOVERNMENT · BOUNTY NOTICE
+                </p>
+              </div>
 
-              {/* Stats */}
-              <div className="grid grid-cols-3 gap-3 mb-8">
-                {[
-                  { label: 'CGPA', value: education.cgpa.toFixed(2) },
-                  { label: 'Projects', value: '4+' },
-                  { label: 'Experience', value: '2 Internships' },
-                ].map((stat, i) => (
-                  <motion.div
-                    key={i}
-                    className="bg-slate-700/50 rounded-xl p-3 border border-cyan-500/20 text-center hover:border-cyan-500/50 transition-colors"
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 + i * 0.1 }}
-                    viewport={{ once: true }}
+              {/* Poster body */}
+              <div style={{ padding: '24px 28px' }}>
+                {/* WANTED title */}
+                <div style={{ textAlign: 'center', marginBottom: 16 }}>
+                  <p
+                    style={{
+                      fontFamily: 'Georgia, serif',
+                      fontSize: '2.4rem',
+                      fontWeight: 900,
+                      color: '#1a1206',
+                      letterSpacing: '0.35em',
+                      textTransform: 'uppercase',
+                      lineHeight: 1,
+                    }}
                   >
-                    <div className="text-xl font-bold text-cyan-400">{stat.value}</div>
-                    <p className="text-xs text-gray-400 uppercase tracking-wide mt-1">{stat.label}</p>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Description */}
-              <div className="space-y-6 mb-8">
-                <p className="text-gray-300 text-base leading-loose">
-                  I&apos;m a passionate backend developer and ML engineer pursuing B.Tech in Computer Science at KIIT. I love building scalable, production-grade systems with Django and Node.js, and integrating cutting-edge AI/ML solutions using TensorFlow and OpenCV.
-                </p>
-                <p className="text-gray-300 text-base leading-loose">
-                  My experience spans full-stack development (Emesys Consultancy), AI/ML engineering (Tata Steel), and building impactful platforms like educational management systems and mental health support platforms.
-                </p>
-              </div>
-            </div>
-
-            <div>
-              {/* Contact info */}
-              <div className="space-y-3 mb-6 text-sm text-gray-400 border-t border-cyan-500/10 pt-6">
-                <div className="flex items-center gap-2.5">
-                  <FiMail className="text-cyan-400 flex-shrink-0" />
-                  <span>{personal.email}</span>
+                    WANTED
+                  </p>
+                  <p
+                    style={{
+                      fontFamily: 'Georgia, serif',
+                      fontSize: '0.75rem',
+                      color: '#5a4a2a',
+                      letterSpacing: '0.25em',
+                      textTransform: 'uppercase',
+                      marginTop: 4,
+                    }}
+                  >
+                    — DEAD OR ALIVE —
+                  </p>
                 </div>
-                <div className="flex items-center gap-2.5">
-                  <FiPhone className="text-cyan-400 flex-shrink-0" />
-                  <span>{personal.phone}</span>
-                </div>
-                <div className="flex items-center gap-2.5">
-                  <FiMapPin className="text-cyan-400 flex-shrink-0" />
-                  <span>{personal.location}</span>
-                </div>
-              </div>
 
-              {/* Links */}
-              <div className="pt-4 border-t border-cyan-500/20">
-                <p className="text-xs uppercase tracking-widest text-gray-500 mb-3 font-semibold">Connect with me</p>
-                <QuickLinks resume={resume} />
+                {/* Name */}
+                <div
+                  style={{
+                    textAlign: 'center',
+                    padding: '12px',
+                    borderTop: '2px solid #000',
+                    borderBottom: '2px solid #000',
+                    marginBottom: 16,
+                  }}
+                >
+                  <p
+                    style={{
+                      fontFamily: 'Georgia, serif',
+                      fontSize: 'clamp(1.5rem, 4vw, 2rem)',
+                      fontWeight: 900,
+                      color: '#1a1206',
+                      letterSpacing: '0.1em',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    {personal.name}
+                  </p>
+                  <p
+                    style={{
+                      fontFamily: 'Georgia, serif',
+                      fontSize: '0.8rem',
+                      color: '#5a4a2a',
+                      marginTop: 4,
+                      letterSpacing: '0.1em',
+                    }}
+                  >
+                    {personal.title}
+                  </p>
+                </div>
+
+                {/* Stats grid */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginBottom: 16 }}>
+                  {[
+                    { label: 'CGPA', value: education.cgpa.toFixed(2) },
+                    { label: 'Projects', value: '4+' },
+                    { label: 'Internships', value: '2' },
+                    { label: 'Status', value: '⚠ ACTIVE' },
+                  ].map((stat, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        border: '1px solid #555',
+                        padding: '8px 12px',
+                        textAlign: 'center',
+                        background: 'rgba(0,0,0,0.04)',
+                      }}
+                    >
+                      <p style={{ fontFamily: 'Georgia, serif', fontSize: '0.58rem', color: '#5a4a2a', letterSpacing: '0.3em', textTransform: 'uppercase', marginBottom: 4 }}>
+                        {stat.label}
+                      </p>
+                      <p style={{ fontFamily: 'Georgia, serif', fontWeight: 700, color: '#1a1206', fontSize: '0.9rem' }}>
+                        {stat.value}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Bounty amount */}
+                <div
+                  style={{
+                    background: '#000',
+                    padding: '14px 20px',
+                    textAlign: 'center',
+                    borderRadius: 2,
+                    marginBottom: 16,
+                  }}
+                >
+                  <p style={{ fontFamily: 'Georgia, serif', fontSize: '0.6rem', color: 'rgba(212,175,55,0.7)', letterSpacing: '0.4em', textTransform: 'uppercase', marginBottom: 5 }}>
+                    BOUNTY
+                  </p>
+                  <p
+                    style={{
+                      fontFamily: 'Georgia, serif',
+                      fontSize: 'clamp(1.3rem, 3vw, 1.8rem)',
+                      fontWeight: 900,
+                      color: '#D4AF37',
+                      letterSpacing: '0.05em',
+                      textShadow: '0 0 20px rgba(212,175,55,0.4)',
+                    }}
+                  >
+                    ₹ 500,000,000
+                  </p>
+                </div>
+
+                {/* Education */}
+                <div style={{ marginBottom: 16 }}>
+                  <p style={{ fontFamily: 'Georgia, serif', fontSize: '0.6rem', color: '#5a4a2a', letterSpacing: '0.35em', textTransform: 'uppercase', marginBottom: 6 }}>
+                    LAST KNOWN ACADEMY
+                  </p>
+                  <p style={{ fontFamily: 'Georgia, serif', fontWeight: 700, color: '#1a1206', fontSize: '0.9rem', lineHeight: 1.4 }}>
+                    {education.school}
+                  </p>
+                  <p style={{ fontFamily: 'Georgia, serif', color: '#5a4a2a', fontSize: '0.8rem', marginTop: 2 }}>
+                    {education.degree} · {education.period}
+                  </p>
+                </div>
+
+                {/* Contact */}
+                <div style={{ borderTop: '1px solid #ccc', paddingTop: 14 }}>
+                  {[
+                    { Icon: FiMail, text: personal.email },
+                    { Icon: FiPhone, text: personal.phone },
+                    { Icon: FiMapPin, text: personal.location },
+                  ].map(({ Icon, text }, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                      <Icon style={{ color: '#5a4a2a', flexShrink: 0 }} />
+                      <span style={{ fontFamily: 'Georgia, serif', fontSize: '0.8rem', color: '#3a2a0a' }}>{text}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Social links */}
+                <div style={{ display: 'flex', gap: 10, marginTop: 14, paddingTop: 14, borderTop: '1px solid #ccc' }}>
+                  {[
+                    { Icon: FiGithub, label: 'GitHub', url: personal.github },
+                    { Icon: FiLinkedin, label: 'LinkedIn', url: personal.linkedin },
+                  ].map(({ Icon, label, url }, i) => (
+                    <a
+                      key={i}
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        background: '#000',
+                        color: '#D4AF37',
+                        border: '1px solid #D4AF37',
+                        padding: '6px 14px',
+                        fontFamily: 'Georgia, serif',
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        letterSpacing: '0.05em',
+                        textDecoration: 'none',
+                        borderRadius: 2,
+                        transition: 'background 0.2s, color 0.2s',
+                      }}
+                      onMouseEnter={(e) => {
+                        (e.currentTarget as HTMLAnchorElement).style.background = '#D4AF37';
+                        (e.currentTarget as HTMLAnchorElement).style.color = '#000';
+                      }}
+                      onMouseLeave={(e) => {
+                        (e.currentTarget as HTMLAnchorElement).style.background = '#000';
+                        (e.currentTarget as HTMLAnchorElement).style.color = '#D4AF37';
+                      }}
+                    >
+                      <Icon />
+                      {label}
+                    </a>
+                  ))}
+                </div>
               </div>
             </div>
           </motion.div>
 
-          {/* Right: Highlights */}
+          {/* RIGHT: Charges + Arrest Record */}
           <motion.div
-            className="flex flex-col gap-6"
-            initial={{ opacity: 0, x: 30 }}
+            initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="flex flex-col gap-5"
           >
-            {highlights.map((item, i) => (
-              <motion.div
-                key={i}
-                className="bg-[#111827]/50 border border-cyan-500/20 rounded-xl p-7 hover:border-cyan-500/60 transition-all backdrop-blur-sm"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 + i * 0.1 }}
-                viewport={{ once: true }}
-                whileHover={{ borderColor: 'rgba(0,217,255,0.7)', boxShadow: '0 0 20px rgba(0,217,255,0.2)' }}
+            {/* CHARGES label */}
+            <div>
+              <p
+                style={{
+                  fontFamily: 'Georgia, serif',
+                  fontSize: '0.65rem',
+                  letterSpacing: '0.5em',
+                  textTransform: 'uppercase',
+                  color: 'rgba(212,175,55,0.6)',
+                  marginBottom: 12,
+                }}
               >
-                <h3 className="text-lg font-bold text-cyan-400 mb-3">{item.title}</h3>
-                <p className="text-gray-300 text-base leading-relaxed whitespace-pre-line">{item.content}</p>
-              </motion.div>
-            ))}
+                ✦ CHARGES
+              </p>
+              <div className="grid grid-cols-1 gap-3">
+                {charges.map((item, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 16 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.3 + i * 0.08 }}
+                    style={{
+                      background: 'rgba(10,8,0,0.6)',
+                      border: '1px solid rgba(212,175,55,0.2)',
+                      padding: '16px 20px',
+                      borderRadius: 2,
+                      transition: 'border-color 0.3s',
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(212,175,55,0.5)';
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(212,175,55,0.2)';
+                    }}
+                  >
+                    <p style={{ fontFamily: 'Georgia, serif', fontWeight: 700, color: '#D4AF37', fontSize: '0.9rem', marginBottom: 4 }}>
+                      {item.label}
+                    </p>
+                    <p style={{ fontFamily: 'Georgia, serif', color: 'rgba(255,255,255,0.65)', fontSize: '0.85rem', lineHeight: 1.6, whiteSpace: 'pre-line' }}>
+                      {item.content}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
 
-            {/* Experience Timeline */}
-            <motion.div
-              className="bg-[#111827]/50 border border-cyan-500/20 rounded-xl p-7 backdrop-blur-sm"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8 }}
-              viewport={{ once: true }}
+            {/* ARREST RECORD */}
+            <div
+              style={{
+                marginTop: 8,
+                background: 'rgba(10,8,0,0.6)',
+                border: '1px solid rgba(212,175,55,0.2)',
+                padding: '20px',
+                borderRadius: 2,
+              }}
             >
-              <h3 className="text-lg font-bold text-cyan-400 mb-4">🏢 Experience</h3>
-              <div className="space-y-6">
-                {[
-                  { company: 'Emesys Consultancy', role: 'Full Stack Developer Intern', period: 'Feb 2026 – Apr 2026', tech: 'React · Node.js · MongoDB' },
-                  { company: 'Tata Steel', role: 'AI/ML Developer Intern', period: 'May 2025 – Jul 2025', tech: 'TensorFlow · OpenCV · Python' },
-                ].map((exp, i) => (
-                  <div key={i} className="flex gap-3">
-                    <div className="flex flex-col items-center">
-                      <div className="w-2.5 h-2.5 bg-cyan-400 rounded-full mt-1.5 flex-shrink-0" />
-                      {i === 0 && <div className="w-px flex-1 bg-cyan-500/30 mt-1.5" />}
+              <p
+                style={{
+                  fontFamily: 'Georgia, serif',
+                  fontSize: '0.65rem',
+                  letterSpacing: '0.5em',
+                  textTransform: 'uppercase',
+                  color: 'rgba(212,175,55,0.6)',
+                  marginBottom: 16,
+                }}
+              >
+                ✦ ARREST RECORD
+              </p>
+              <div className="flex flex-col gap-6">
+                {experience.map((exp, i) => (
+                  <div key={i} style={{ display: 'flex', gap: 14 }}>
+                    {/* Timeline dot */}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
+                      <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#D4AF37', boxShadow: '0 0 8px rgba(212,175,55,0.5)', marginTop: 4 }} />
+                      {i < experience.length - 1 && (
+                        <div style={{ width: 1, flex: 1, background: 'rgba(212,175,55,0.2)', marginTop: 6 }} />
+                      )}
                     </div>
-                    <div>
-                      <div className="text-white text-base font-semibold">{exp.company}</div>
-                      <div className="text-cyan-400 text-sm">{exp.role}</div>
-                      <div className="text-gray-500 text-xs mt-0.5">{exp.period}</div>
-                      <div className="text-gray-400 text-xs mt-1 font-medium">{exp.tech}</div>
+                    <div style={{ paddingBottom: i < experience.length - 1 ? 16 : 0 }}>
+                      <p style={{ fontFamily: 'Georgia, serif', fontWeight: 700, color: '#fff', fontSize: '0.95rem' }}>
+                        {exp.company}
+                      </p>
+                      <p style={{ fontFamily: 'Georgia, serif', color: '#D4AF37', fontSize: '0.8rem', marginTop: 2 }}>
+                        {exp.position}
+                      </p>
+                      <p style={{ fontFamily: 'Georgia, serif', color: 'rgba(255,255,255,0.35)', fontSize: '0.72rem', marginTop: 2, letterSpacing: '0.05em' }}>
+                        {exp.period}
+                      </p>
+                      <p style={{ fontFamily: 'Georgia, serif', color: 'rgba(255,255,255,0.6)', fontSize: '0.82rem', marginTop: 6, lineHeight: 1.55 }}>
+                        {exp.description}
+                      </p>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginTop: 8 }}>
+                        {exp.tech.map((t) => (
+                          <span
+                            key={t}
+                            style={{
+                              fontSize: '0.68rem',
+                              color: 'rgba(212,175,55,0.7)',
+                              background: 'rgba(212,175,55,0.06)',
+                              border: '1px solid rgba(212,175,55,0.15)',
+                              padding: '2px 8px',
+                              borderRadius: 2,
+                              fontFamily: 'Georgia, serif',
+                            }}
+                          >
+                            {t}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
-            </motion.div>
+            </div>
           </motion.div>
         </div>
       </div>
