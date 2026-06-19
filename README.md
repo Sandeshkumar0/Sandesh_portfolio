@@ -96,5 +96,5 @@ The portfolio is deployed on Vercel:
 
 - Email: [sandeshkr07@gmail.com](mailto:sandeshkr07@gmail.com)
 - GitHub: [Sandeshkumar0](https://github.com/Sandeshkumar0)
-- LinkedIn: [sandesh-kumar](https://linkedin.com/in/sandesh-kumar)
+- LinkedIn: [sandesh-kumar](https://www.linkedin.com/in/sandesh-kumar-b425922ab/)
 
