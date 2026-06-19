@@ -1,0 +1,68 @@
+/* ============================================
+   VERCEL DESIGN TOKENS — One Piece Bounty Edition
+   ============================================ */
+
+:root {
+  /* ── Core Palette ── */
+  --color-primary-black: #000000;
+  --color-primary-white: #FFFFFF;
+  --color-background: #0a0a0a;          /* Deep Vercel black */
+  --color-surface: #111111;             /* Card backgrounds */
+  --color-surface-raised: #1a1a1a;      /* Elevated surfaces */
+
+  /* ── Bounty Poster Accents ── */
+  --color-gold: #D4AF37;               /* Primary gold — bounty amount */
+  --color-gold-light: #f0cc5a;          /* Lighter gold for glow */
+  --color-gold-dim: rgba(212,175,55,0.15); /* Gold tint */
+  --color-sepia: #8B7355;              /* Vintage aged paper tone */
+  --color-danger: #FF6B6B;             /* Danger / wanted level */
+  --color-danger-dark: #c0392b;        /* Deeper red */
+  --color-paper: #FEFEF0;             /* Off-white aged parchment */
+  --color-paper-dark: #f0ede0;         /* Darker parchment */
+
+  /* ── Text ── */
+  --text-primary: #FFFFFF;
+  --text-secondary: #a0a0a0;
+  --text-muted: #666666;
+  --text-gold: var(--color-gold);
+  --text-on-paper: #1a1206;            /* Dark text on parchment cards */
+
+  /* ── Borders ── */
+  --border-default: rgba(255,255,255,0.08);
+  --border-gold: rgba(212,175,55,0.4);
+  --border-gold-bright: var(--color-gold);
+
+  /* ── Typography ── */
+  --font-serif: 'Georgia', 'Times New Roman', serif;   /* Wanted poster headers */
+  --font-sans: 'Inter', -apple-system, sans-serif;     /* Body - clean modern */
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+  /* ── Spacing (Vercel precision) ── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-24: 96px;
+
+  /* ── Radii ── */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  /* ── Shadows ── */
+  --shadow-card: 0 4px 24px rgba(0,0,0,0.4);
+  --shadow-gold: 0 0 30px rgba(212,175,55,0.3);
+  --shadow-danger: 0 0 20px rgba(255,107,107,0.3);
+
+  /* ── Transitions ── */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.45, 0, 0.55, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 600ms;
+}

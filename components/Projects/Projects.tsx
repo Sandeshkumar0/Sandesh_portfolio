@@ -1,24 +1,19 @@
 // components/Projects/Projects.tsx
-// SECTION 4: Projects & Work Section (Stacked Layout)
+// KNOWN HIDEOUTS — Prominent project showcase with danger levels
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FiExternalLink } from 'react-icons/fi';
-
-interface TechCategory {
-  category: string;
-  list: string;
-}
+import { FiExternalLink, FiGithub } from 'react-icons/fi';
 
 interface Project {
   id: number;
   name: string;
   tagline: string;
   description: string;
-  techCategories: TechCategory[];
+  tech: string[];
   date: string;
   link: string;
-  gradient: string;
+  dangerLevel: number;
 }
 
 const PROJECTS: Project[] = [
@@ -26,161 +21,289 @@ const PROJECTS: Project[] = [
     id: 1,
     name: 'eUdyaan',
     tagline: 'Mental Health & Peer Support Platform',
-    description: 'AI chatbot + peer support addressing youth depression for J&K Government',
-    techCategories: [
-      { category: 'Backend', list: 'Node.js, Express.js, MongoDB' },
-      { category: 'AI/ML', list: 'LLM APIs, Chatbot Logic' },
-      { category: 'Database', list: 'MongoDB, Redis' }
-    ],
+    description: 'AI chatbot + peer support addressing youth depression for J&K Government. Features real-time crisis detection and LLM-powered conversations.',
+    tech: ['Node.js', 'LLM APIs', 'MongoDB', 'Redis'],
     date: '2025 - PRESENT',
     link: 'https://github.com/sandesh07/eudyaan',
-    gradient: 'from-blue-500/10 to-cyan-500/10',
+    dangerLevel: 5,
   },
   {
     id: 2,
     name: 'AeroDrive',
     tagline: 'Full-Stack Car Rental Platform',
-    description: 'Advanced booking system with JWT auth, face recognition, drowsiness detection',
-    techCategories: [
-      { category: 'Frontend', list: 'Next.js, React, Tailwind' },
-      { category: 'Backend', list: 'Node.js, Express, PostgreSQL' },
-      { category: 'ML', list: 'TensorFlow, OpenCV' }
-    ],
+    description: 'Advanced booking system featuring JWT auth, face recognition login, and real-time drowsiness detection for driver safety.',
+    tech: ['Next.js', 'Node.js', 'TensorFlow', 'OpenCV'],
     date: '2024 - PRESENT',
     link: 'https://github.com/sandesh07/aerodrive',
-    gradient: 'from-purple-500/10 to-pink-500/10',
+    dangerLevel: 4,
   },
   {
     id: 3,
     name: 'CampusCred',
     tagline: 'Peer-to-Peer Micro-Lending Platform',
-    description: 'Skill-based interest, XGBoost trust scoring, emergency loans for students',
-    techCategories: [
-      { category: 'Backend', list: 'Django, Node.js' },
-      { category: 'Frontend', list: 'React' },
-      { category: 'ML', list: 'XGBoost, Random Forest' }
-    ],
+    description: 'Skill-based interest rates, XGBoost trust scoring, emergency loans for students — fintech for campus ecosystems.',
+    tech: ['Django', 'React', 'XGBoost', 'Random Forest'],
     date: '2024',
     link: 'https://github.com/sandesh07/campuscred',
-    gradient: 'from-green-500/10 to-teal-500/10',
+    dangerLevel: 4,
   },
   {
     id: 4,
-    name: 'Print-on-Demand Platform',
+    name: 'Print-on-Demand',
     tagline: 'Vistaprint-style Platform for Indian SMBs',
-    description: 'Seller dashboard, dynamic customization, Razorpay integration',
-    techCategories: [
-      { category: 'Frontend', list: 'React' },
-      { category: 'Backend', list: 'Node.js, Express' },
-      { category: 'Database', list: 'MongoDB' },
-      { category: 'Tools', list: 'Fabric.js, Cloudinary' }
-    ],
+    description: 'Seller dashboard with dynamic product customization, Fabric.js canvas editing, and Razorpay payment integration.',
+    tech: ['React', 'Node.js', 'Fabric.js', 'Cloudinary'],
     date: '2024',
     link: 'https://github.com/sandesh07/print-on-demand',
-    gradient: 'from-orange-500/10 to-red-500/10',
-  }
+    dangerLevel: 3,
+  },
 ];
+
+const DangerBadge: React.FC<{ level: number }> = ({ level }) => {
+  const labels = ['', 'LOW', 'MODERATE', 'HIGH', 'EXTREME', 'CRITICAL'];
+  const colors: Record<number, { bg: string; border: string; text: string }> = {
+    1: { bg: 'rgba(34,197,94,0.12)',  border: 'rgba(34,197,94,0.4)',  text: '#4ade80' },
+    2: { bg: 'rgba(234,179,8,0.12)',  border: 'rgba(234,179,8,0.4)',  text: '#facc15' },
+    3: { bg: 'rgba(249,115,22,0.12)', border: 'rgba(249,115,22,0.4)', text: '#fb923c' },
+    4: { bg: 'rgba(239,68,68,0.12)',  border: 'rgba(239,68,68,0.4)',  text: '#f87171' },
+    5: { bg: 'rgba(239,68,68,0.18)',  border: 'rgba(239,68,68,0.7)',  text: '#FF6B6B' },
+  };
+  const c = colors[level] ?? colors[3];
+
+  return (
+    <span
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 5,
+        background: c.bg,
+        border: `1px solid ${c.border}`,
+        color: c.text,
+        fontSize: '0.65rem',
+        fontWeight: 700,
+        letterSpacing: '0.12em',
+        textTransform: 'uppercase',
+        padding: '3px 10px',
+        borderRadius: 3,
+        fontFamily: 'Georgia, serif',
+      }}
+    >
+      {'▲'.repeat(level)} {labels[level]}
+    </span>
+  );
+};
 
 export const Projects: React.FC = () => {
   return (
     <section
-      className="relative w-full py-24 px-6 bg-[#1e293b] overflow-hidden"
       id="projects"
+      className="relative w-full overflow-hidden"
+      style={{ background: 'linear-gradient(180deg, #000000 0%, #050200 100%)', paddingBlock: 'clamp(4rem, 10vw, 8rem)' }}
     >
-      {/* Background orbs */}
-      <motion.div
-        className="absolute top-0 right-0 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl"
-        animate={{ x: [0, 50, 0], y: [0, -50, 0] }}
-        transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <motion.div
-        className="absolute bottom-0 left-0 w-80 h-80 bg-purple-500/5 rounded-full blur-3xl"
-        animate={{ x: [0, -40, 0], y: [0, 40, 0] }}
-        transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
+      {/* Background pattern */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: `
+            radial-gradient(ellipse 80% 40% at 50% 0%, rgba(212,175,55,0.06) 0%, transparent 60%),
+            repeating-linear-gradient(90deg, transparent, transparent 80px, rgba(212,175,55,0.02) 80px, rgba(212,175,55,0.02) 81px)
+          `,
+        }}
       />
 
-      <div className="relative z-10 max-w-5xl mx-auto">
-        {/* Title */}
+      {/* Top gold rule */}
+      <motion.div
+        className="absolute top-0 inset-x-0 h-px"
+        style={{ background: 'linear-gradient(to right, transparent, #D4AF37 30%, #D4AF37 70%, transparent)' }}
+        initial={{ scaleX: 0 }}
+        whileInView={{ scaleX: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1.2 }}
+      />
+
+      <div className="relative z-10 max-w-6xl mx-auto px-6">
+        {/* Section Header */}
         <motion.div
-          className="text-center mb-16"
+          className="text-center mb-20"
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
           viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
         >
-          <h2 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent mb-4">
-            Projects & Work
-          </h2>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Showcasing my journey through backend, ML/AI, and full-stack projects
+          <p
+            className="text-xs tracking-[0.5em] uppercase mb-4"
+            style={{ color: 'rgba(212,175,55,0.65)', fontFamily: 'Georgia, serif' }}
+          >
+            ✦ MARINE INTELLIGENCE BUREAU ✦
           </p>
-          <div className="w-20 h-1 bg-gradient-to-r from-cyan-400 to-blue-400 mx-auto rounded-full mt-6" />
+          <h2
+            className="font-black leading-none mb-4"
+            style={{
+              fontFamily: 'Georgia, serif',
+              fontSize: 'clamp(3rem, 8vw, 6rem)',
+              color: '#D4AF37',
+              textShadow: '0 0 60px rgba(212,175,55,0.3)',
+              letterSpacing: '-0.02em',
+            }}
+          >
+            KNOWN HIDEOUTS
+          </h2>
+          <p
+            style={{
+              fontFamily: 'Georgia, serif',
+              fontSize: 'clamp(0.85rem, 2vw, 1.1rem)',
+              color: 'rgba(255,255,255,0.45)',
+              letterSpacing: '0.25em',
+              textTransform: 'uppercase',
+            }}
+          >
+            Dangerous Projects — Handle with Caution
+          </p>
+          <div
+            className="mx-auto mt-6"
+            style={{
+              width: 120,
+              height: 2,
+              background: 'linear-gradient(to right, transparent, #D4AF37, transparent)',
+            }}
+          />
         </motion.div>
 
-        {/* Stacked Project Cards */}
-        <div className="space-y-8">
+        {/* Project Grid — 2 columns */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {PROJECTS.map((project, index) => (
             <motion.div
               key={project.id}
-              initial={{ opacity: 0, y: 40 }}
+              initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-100px' }}
-              transition={{ duration: 0.6 }}
-              className={`bg-gradient-to-br ${project.gradient} bg-slate-900/40 border border-cyan-500/20 rounded-2xl p-8 sm:p-10 backdrop-blur-sm`}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.65, delay: index * 0.1 }}
+              whileHover={{ y: -6, transition: { duration: 0.25 } }}
+              className="group relative flex flex-col"
+              style={{
+                background: 'rgba(10,8,0,0.6)',
+                border: '1px solid rgba(212,175,55,0.2)',
+                borderRadius: 2,
+                overflow: 'hidden',
+                backdropFilter: 'blur(8px)',
+                boxShadow: '0 4px 30px rgba(0,0,0,0.4)',
+                transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(212,175,55,0.55)';
+                (e.currentTarget as HTMLDivElement).style.boxShadow = '0 8px 50px rgba(212,175,55,0.15), 0 4px 30px rgba(0,0,0,0.5)';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(212,175,55,0.2)';
+                (e.currentTarget as HTMLDivElement).style.boxShadow = '0 4px 30px rgba(0,0,0,0.4)';
+              }}
             >
-              {/* Card Header */}
-              <div className="border-b border-slate-800 pb-6 mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                  <h3 className="text-3xl font-bold text-white">{project.name}</h3>
-                  <p className="text-cyan-400 font-semibold mt-1 text-lg">{project.tagline}</p>
-                </div>
-                <div className="text-slate-400 text-sm font-semibold whitespace-nowrap bg-slate-800 px-4 py-1.5 rounded-full border border-slate-700">
-                  {project.date}
-                </div>
+              {/* Card top bar */}
+              <div
+                className="flex items-center justify-between px-6 py-4"
+                style={{
+                  borderBottom: '1px solid rgba(212,175,55,0.15)',
+                  background: 'rgba(212,175,55,0.04)',
+                }}
+              >
+                <p
+                  className="text-xs tracking-[0.3em] uppercase"
+                  style={{ color: 'rgba(212,175,55,0.5)', fontFamily: 'Georgia, serif' }}
+                >
+                  CASE #{String(project.id).padStart(3, '0')}
+                </p>
+                <DangerBadge level={project.dangerLevel} />
               </div>
 
-              {/* Two Column Content */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
-                {/* LEFT: Description & Tech */}
-                <div className="flex flex-col justify-between">
-                  <p className="text-slate-300 leading-relaxed text-base mb-6">
-                    {project.description}
+              {/* Card body */}
+              <div className="flex flex-col flex-1 p-6 gap-4">
+                {/* Title */}
+                <div>
+                  <h3
+                    className="font-black leading-tight mb-1"
+                    style={{
+                      fontFamily: 'Georgia, serif',
+                      fontSize: 'clamp(1.6rem, 3vw, 2.2rem)',
+                      color: '#FFFFFF',
+                      letterSpacing: '-0.01em',
+                    }}
+                  >
+                    {project.name}
+                  </h3>
+                  <p
+                    style={{
+                      fontFamily: 'Georgia, serif',
+                      fontSize: '0.85rem',
+                      color: '#D4AF37',
+                      fontStyle: 'italic',
+                    }}
+                  >
+                    {project.tagline}
                   </p>
-                  
-                  {/* Tech Cards (Staggered) */}
-                  <div className="space-y-4">
-                    {project.techCategories.map((tech, idx) => (
-                      <motion.div
-                        key={idx}
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.4, delay: idx * 0.1 }}
-                        className="bg-slate-700/50 border border-cyan-500/30 rounded-lg px-4 py-3"
-                      >
-                        <div className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-1">
-                          {tech.category}
-                        </div>
-                        <div className="text-sm text-slate-200">
-                          {tech.list}
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
                 </div>
 
-                {/* RIGHT: View Project Button */}
-                <div className="flex items-end justify-center lg:justify-end mt-6 lg:mt-0">
-                  <motion.a
+                {/* Description */}
+                <p
+                  style={{
+                    color: 'rgba(255,255,255,0.65)',
+                    fontSize: '0.9rem',
+                    lineHeight: 1.75,
+                    fontFamily: 'Georgia, serif',
+                  }}
+                >
+                  {project.description}
+                </p>
+
+                {/* Tech tags */}
+                <div className="flex flex-wrap gap-2 mt-auto">
+                  {project.tech.map((t) => (
+                    <span
+                      key={t}
+                      style={{
+                        fontSize: '0.72rem',
+                        fontFamily: 'Georgia, serif',
+                        color: 'rgba(212,175,55,0.8)',
+                        background: 'rgba(212,175,55,0.07)',
+                        border: '1px solid rgba(212,175,55,0.2)',
+                        padding: '3px 10px',
+                        borderRadius: 2,
+                        letterSpacing: '0.05em',
+                      }}
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+
+                {/* Footer */}
+                <div
+                  className="flex items-center justify-between pt-4 mt-2"
+                  style={{ borderTop: '1px solid rgba(212,175,55,0.1)' }}
+                >
+                  <span
+                    className="text-xs tracking-widest uppercase"
+                    style={{ color: 'rgba(255,255,255,0.3)', fontFamily: 'Georgia, serif' }}
+                  >
+                    {project.date}
+                  </span>
+                  <a
                     href={project.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-bold px-8 py-4 rounded-xl shadow-lg shadow-cyan-500/10 hover:shadow-cyan-500/30"
-                    whileHover={{ scale: 1.05, boxShadow: '0 0 25px rgba(0, 217, 255, 0.4)' }}
-                    whileTap={{ scale: 0.98 }}
+                    className="inline-flex items-center gap-2 text-sm font-bold group/link"
+                    style={{
+                      color: '#D4AF37',
+                      fontFamily: 'Georgia, serif',
+                      textDecoration: 'none',
+                      transition: 'opacity 0.2s',
+                    }}
+                    onMouseEnter={(e) => ((e.currentTarget as HTMLAnchorElement).style.opacity = '0.7')}
+                    onMouseLeave={(e) => ((e.currentTarget as HTMLAnchorElement).style.opacity = '1')}
                   >
-                    View Project <FiExternalLink className="w-5 h-5" />
-                  </motion.a>
+                    <FiGithub className="w-4 h-4" />
+                    View Project
+                    <FiExternalLink className="w-3.5 h-3.5" />
+                  </a>
                 </div>
               </div>
             </motion.div>
