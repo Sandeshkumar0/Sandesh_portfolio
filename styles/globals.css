@@ -103,8 +103,9 @@ a {
   display: block;
   max-width: 100%;
   overflow: hidden;
-  font-size: clamp(3.2rem, 16vw, 6.3rem);
-  line-height: 0.9;
+  padding-inline: 0.25rem;
+  font-size: clamp(2.15rem, 9vw, 3.95rem);
+  line-height: 0.96;
 }
 
 .nav-link {
@@ -201,7 +202,7 @@ a {
 }
 
 .photo-front {
-  object-position: center 16%;
+  object-position: center 10%;
 }
 
 .photo-fallback {
@@ -374,6 +375,6 @@ a {
   }
 
   .poster-wanted {
-    font-size: clamp(3rem, 18vw, 5rem);
+    font-size: clamp(2rem, 12vw, 3.25rem);
   }
 }

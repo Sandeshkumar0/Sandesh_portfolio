@@ -113,12 +113,9 @@ export default function Home() {
                 <p className="wanted-title poster-wanted">
                   Wanted
                 </p>
-                <p className="-mt-1 font-serif text-2xl font-black uppercase tracking-[0.18em]">
-                  Dead or Alive
-                </p>
               </header>
 
-              <div className="photo-flip my-6 aspect-[4/3] w-full border-[5px] border-[#2b1b0d] bg-[#2b1b0d]">
+              <div className="photo-flip my-5 aspect-[3/4] w-full border-[5px] border-[#2b1b0d] bg-[#2b1b0d]">
                 <div className="photo-flip-inner">
                   <div className="photo-fallback">
                     <span>Photo Missing</span>
