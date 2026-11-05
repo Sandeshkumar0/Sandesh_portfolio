@@ -235,6 +235,8 @@ a {
 
 .wanted-poster {
   position: relative;
+  --poster-rotate-x: 0deg;
+  --poster-rotate-y: 0deg;
   background:
     radial-gradient(circle at top left, rgba(255, 247, 212, 0.66), transparent 18rem),
     linear-gradient(145deg, #e7c98c, #bd8347 170%);
@@ -243,7 +245,17 @@ a {
     0 0 0 10px rgba(216, 184, 120, 0.24),
     14px 18px 0 rgba(32, 22, 11, 0.32),
     0 24px 55px rgba(0, 0, 0, 0.32);
-  transform: rotate(-1deg);
+  transform: perspective(1200px) rotateX(var(--poster-rotate-x)) rotateY(var(--poster-rotate-y))
+    rotate(-1deg);
+  transform-style: preserve-3d;
+  transition: box-shadow 220ms ease;
+}
+
+.wanted-poster:hover {
+  box-shadow:
+    0 0 0 10px rgba(216, 184, 120, 0.24),
+    18px 22px 0 rgba(32, 22, 11, 0.32),
+    0 28px 65px rgba(0, 0, 0, 0.36);
 }
 
 .photo-flip {

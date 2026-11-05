@@ -1,4 +1,6 @@
 import Head from 'next/head';
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
 import {
   Anchor,
   ArrowDown,
@@ -10,6 +12,7 @@ import {
   ScrollText,
   Send,
 } from 'lucide-react';
+import { useRef } from 'react';
 import ArchiveNavigation from '@/components/ArchiveNavigation';
 import { RESUME_DATA } from '@/utils/data';
 
@@ -22,6 +25,50 @@ const allSkills = [
 ];
 
 export default function Home() {
+  const posterRef = useRef<HTMLElement>(null);
+
+  useGSAP(
+    () => {
+      const poster = posterRef.current;
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const finePointer = window.matchMedia('(pointer: fine)').matches;
+
+      if (!poster || reducedMotion || !finePointer) return;
+
+      const rotateX = gsap.quickTo(poster, '--poster-rotate-x', {
+        duration: 0.35,
+        ease: 'power3.out',
+        unit: 'deg',
+      });
+      const rotateY = gsap.quickTo(poster, '--poster-rotate-y', {
+        duration: 0.35,
+        ease: 'power3.out',
+        unit: 'deg',
+      });
+
+      const handlePointerMove = (event: PointerEvent) => {
+        const bounds = poster.getBoundingClientRect();
+        const x = (event.clientX - bounds.left) / bounds.width - 0.5;
+        const y = (event.clientY - bounds.top) / bounds.height - 0.5;
+        rotateX(y * -7);
+        rotateY(x * 7);
+      };
+      const resetTilt = () => {
+        rotateX(0);
+        rotateY(0);
+      };
+
+      poster.addEventListener('pointermove', handlePointerMove);
+      poster.addEventListener('pointerleave', resetTilt);
+
+      return () => {
+        poster.removeEventListener('pointermove', handlePointerMove);
+        poster.removeEventListener('pointerleave', resetTilt);
+      };
+    },
+    { scope: posterRef },
+  );
+
   return (
     <>
       <Head>
@@ -89,7 +136,10 @@ export default function Home() {
 
         <section id="bounty" className="paper-band px-5 py-20 sm:py-24">
           <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[0.92fr_1.08fr]">
-            <article className="wanted-poster mx-auto w-full max-w-[470px] p-5 sm:p-7">
+            <article
+              ref={posterRef}
+              className="wanted-poster mx-auto w-full max-w-[470px] p-5 sm:p-7"
+            >
               <header className="text-center">
                 <p className="wanted-title poster-wanted">
                   Wanted
@@ -102,11 +152,12 @@ export default function Home() {
                     <span>Photo Missing</span>
                     <small>Add my-pic.jpeg and sanji-bounty.webp to /public</small>
                   </div>
-                  {/* Replace /my-pic.jpeg with your personal photo in /public. */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src="/my-pic.jpeg"
+                    src="/sandyp.jpeg"
                     alt={`${RESUME_DATA.personal.name} portrait`}
+                    loading="lazy"
+                    decoding="async"
                     className="photo-face photo-front"
                     onError={(event) => {
                       event.currentTarget.style.display = 'none';
