@@ -10,6 +10,7 @@ import {
   ScrollText,
   Send,
 } from 'lucide-react';
+import ArchiveNavigation from '@/components/ArchiveNavigation';
 import { RESUME_DATA } from '@/utils/data';
 
 const allSkills = [
@@ -18,13 +19,6 @@ const allSkills = [
   ...RESUME_DATA.skills.backend,
   ...RESUME_DATA.skills.ml,
   ...RESUME_DATA.skills.cloud,
-];
-
-const navItems = [
-  { label: 'Bounty', href: '#bounty' },
-  { label: 'Stack', href: '#stack' },
-  { label: 'Projects', href: '#projects' },
-  { label: 'Contact', href: '#contact' },
 ];
 
 export default function Home() {
@@ -63,20 +57,7 @@ export default function Home() {
           </div>
 
           <div className="paper-surface relative flex min-h-[52vh] items-center justify-center px-6 py-20 lg:min-h-screen lg:px-12">
-            <nav className="absolute left-6 right-6 top-5 z-10 flex flex-wrap items-center justify-between gap-4 text-xs font-black uppercase tracking-[0.22em] text-[#3a2410]">
-              <a href="#top" className="inline-flex items-center" aria-label="AZ home">
-                {/* Replace /az-logo-brown.png with your final logo file in /public if needed. */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/az-logo-brown.png" alt="AZ logo" className="site-logo" />
-              </a>
-              <div className="flex flex-wrap gap-3">
-                {navItems.map((item) => (
-                  <a key={item.href} href={item.href} className="nav-link">
-                    {item.label}
-                  </a>
-                ))}
-              </div>
-            </nav>
+            <ArchiveNavigation />
 
             <div className="max-w-xl pt-12">
               <p className="mb-5 text-sm font-black uppercase tracking-[0.35em] text-[#7a4720]">
